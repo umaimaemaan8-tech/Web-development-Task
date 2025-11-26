@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Lab 8 – JS Basics: Confidence Quiz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #020617;
+      --card: #020617;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.18);
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --error: #f97373;
+      --success: #4ade80;
+      --radius: 1rem;
+      --shadow: 0 18px 40px rgba(15, 23, 42, 0.8);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      background: radial-gradient(circle at top, #0f172a 0, #020617 50%);
+      color: var(--text-main);
+    }
+
+    .app {
+      width: 100%;
+      max-width: 540px;
+      background: radial-gradient(circle at 0 0, #020617, #020617);
+      border-radius: 1.4rem;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      box-shadow: var(--shadow);
+      padding: 1.6rem 1.7rem 1.4rem;
+    }
+
+    .app-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .pill {
+      padding: 0.25rem 0.8rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    h1 {
+      margin: 0.3rem 0;
+      font-size: 1.4rem;
+    }
+
+    p {
+      margin: 0.2rem 0;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .progress-wrapper {
+      margin-top: 0.6rem;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      overflow: hidden;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #22d3ee, #6366f1);
+      transition: width 0.3s ease-out;
+    }
+
+    .progress-label {
+      margin-top: 0.25rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .question-card {
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: var(--radius);
+      background: radial-gradient(circle at 0 0, #020617, #020617);
+      border: 1px dashed rgba(148, 163, 184, 0.5);
+    }
+
+    .question-title {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.35rem;
+      font-size: 0.88rem;
+    }
+
+    .option input {
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .short-input-group {
+      margin-top: 0.4rem;
+    }
+
+    .short-input-group label {
+      display: block;
+      margin-bottom: 0.25rem;
+      font-size: 0.85rem;
+    }
+
+    input[type="number"],
+    input[type="text"] {
+      width: 100%;
+      padding: 0.45rem 0.55rem;
+      border-radius: 0.6rem;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: #020617;
+      color: var(--text-main);
+      font-size: 0.88rem;
+    }
+
+    input[type="number"]:focus,
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent-soft);
+    }
+
+    .error-text {
+      font-size: 0.78rem;
+      color: var(--error);
+      margin-top: 0.2rem;
+      min-height: 1.1em;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.6rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border-radius: 999px;
+      border: 1px solid transparent;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      background: var(--accent);
+      color: #020617;
+      font-weight: 500;
+      transition: transform 0.1s ease-out, box-shadow 0.1s ease-out,
+        background 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.8);
+    }
+
+    button.secondary {
+      background: transparent;
+      color: var(--text-muted);
+      border-color: rgba(148, 163, 184, 0.7);
+    }
+
+    button.secondary:hover {
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .status {
+      margin-top: 0.4rem;
+      font-size: 0.83rem;
+      min-height: 1.3em;
+    }
+
+    .status.success {
+      color: var(--success);
+    }
+
+    .status.error {
+      color: var(--error);
+    }
+
+    .score-pill {
+      font-size: 0.82rem;
+      padding: 0.15rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+    }
+
+    .keyboard-hint {
+      margin-top: 0.6rem;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 480px) {
+      .app {
+        padding: 1.3rem 1.1rem 1.2rem;
+      }
+      .app-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <div>
+        <div class="pill">Lab 8 • JavaScript Basics</div>
+        <h1>Confidence Quiz</h1>
+        <p>
+          A tiny interactive widget that tests basic web dev knowledge.
+          It uses variables, functions, events, and DOM manipulation.
+        </p>
+      </div>
+      <div>
+        <span id="score-pill" class="score-pill">Score: 0 / 3</span>
+      </div>
+    </header>
+
+    <!-- Progress bar -->
+    <div class="progress-wrapper">
+      <div class="progress-track">
+        <div id="progress-bar" class="progress-bar"></div>
+      </div>
+      <div id="progress-label" class="progress-label">
+        Answer questions to increase your progress.
+      </div>
+    </div>
+
+    <!-- Question 1 -->
+    <section class="question-card">
+      <div class="question-title">
+        1. Which keyword declares a variable that can be reassigned?
+      </div>
+      <label class="option">
+        <input type="radio" name="q1" value="const" />
+        <span><code>const</code></span>
+      </label>
+      <label class="option">
+        <input type="radio" name="q1" value="let" />
+        <span><code>let</code></span>
+      </label>
+      <label class="option">
+        <input type="radio" name="q1" value="readonly" />
+        <span><code>readonly</code></span>
+      </label>
+      <div id="q1-error" class="error-text"></div>
+    </section>
+
+    <!-- Question 2 -->
+    <section class="question-card">
+      <div class="question-title">
+        2. What does <code>document.querySelector()</code> return?
+      </div>
+      <div class="short-input-group">
+        <label for="q2-input">
+          Answer in a few words (e.g. “the first matching element”)
+        </label>
+        <input
+          id="q2-input"
+          type="text"
+          placeholder="Type your answer here…"
+        />
+      </div>
+      <div id="q2-error" class="error-text"></div>
+    </section>
+
+    <!-- Question 3 -->
+    <section class="question-card">
+      <div class="question-title">
+        3. If you attach a click listener to a button, how many times will the
+        handler run if you click the button twice?
+      </div>
+      <div class="short-input-group">
+        <label for="q3-input">Enter a number</label>
+        <input
+          id="q3-input"
+          type="number"
+          min="0"
+          step="1"
+          placeholder="0, 1, 2, …"
+        />
+      </div>
+      <div id="q3-error" class="error-text"></div>
+    </section>
+
+    <!-- Controls -->
+    <div class="controls">
+      <button id="check-btn" type="button">
+        ✅ Check answers
+      </button>
+      <button id="reset-btn" type="button" class="secondary">
+        🔄 Reset quiz
+      </button>
+      <div class="keyboard-hint">
+        Press <strong>Enter</strong> to check, <strong>Esc</strong> to reset.
+      </div>
+    </div>
+
+    <div id="status" class="status"></div>
+  </div>
+
+  <script>
+    // ====== VARIABLES ======
+    const scorePill = document.getElementById("score-pill");
+    const progressBar = document.getElementById("progress-bar");
+    const progressLabel = document.getElementById("progress-label");
+    const statusText = document.getElementById("status");
+
+    const q1Error = document.getElementById("q1-error");
+    const q2Error = document.getElementById("q2-error");
+    const q3Error = document.getElementById("q3-error");
+
+    const checkBtn = document.getElementById("check-btn");
+    const resetBtn = document.getElementById("reset-btn");
+    const q2Input = document.getElementById("q2-input");
+    const q3Input = document.getElementById("q3-input");
+
+    const TOTAL_QUESTIONS = 3;
+
+    // ====== FUNCTIONS ======
+
+    // Normalize user text input for comparison
+    function normalize(text) {
+      return text.trim().toLowerCase();
+    }
+
+    function clearErrors() {
+      q1Error.textContent = "";
+      q2Error.textContent = "";
+      q3Error.textContent = "";
+    }
+
+    function updateScore(score) {
+      scorePill.textContent = `Score: ${score} / ${TOTAL_QUESTIONS}`;
+      const percentage = (score / TOTAL_QUESTIONS) * 100;
+      progressBar.style.width = percentage + "%";
+
+      if (score === 0) {
+        progressLabel.textContent = "Keep going – you’ve got this.";
+      } else if (score < TOTAL_QUESTIONS) {
+        progressLabel.textContent = "Nice! Fix a few things and try again.";
+      } else {
+        progressLabel.textContent = "Perfect score! You can move on with confidence.";
+      }
+    }
+
+    function showStatus(message, type) {
+      statusText.textContent = message;
+      statusText.classList.remove("success", "error");
+      if (type) {
+        statusText.classList.add(type);
+      }
+    }
+
+    function validateAndScore() {
+      console.log("Checking answers…"); // For Lab 8: console usage
+
+      clearErrors();
+      let score = 0;
+      let hasValidationError = false;
+
+      // Question 1: radio buttons
+      const q1Selected = document.querySelector('input[name="q1"]:checked');
+
+      if (!q1Selected) {
+        q1Error.textContent = "Please pick one option.";
+        hasValidationError = true;
+        console.warn("Q1 not answered.");
+      } else if (q1Selected.value === "let") {
+        score++;
+      }
+
+      // Question 2: text input, fuzzy check
+      const q2Value = normalize(q2Input.value);
+      if (!q2Value) {
+        q2Error.textContent = "This field can’t be empty.";
+        hasValidationError = true;
+        console.warn("Q2 empty.");
+      } else {
+        const correctPhrases = [
+          "first matching element",
+          "the first matching element",
+          "first element that matches",
+        ];
+
+        const isCorrectPhrase = correctPhrases.some((phrase) =>
+          q2Value.includes(phrase)
+        );
+        const includesElement = q2Value.includes("element");
+
+        if (isCorrectPhrase || includesElement) {
+          score++;
+        }
+      }
+
+      // Question 3: numeric input
+      const rawQ3 = q3Input.value;
+      const q3Value = Number(rawQ3);
+
+      if (!rawQ3.trim()) {
+        q3Error.textContent = "Please enter a number.";
+        hasValidationError = true;
+        console.warn("Q3 empty.");
+      } else if (Number.isNaN(q3Value) || q3Value < 0) {
+        q3Error.textContent = "Enter a valid non-negative number.";
+        hasValidationError = true;
+        console.error("Q3 invalid number:", rawQ3);
+      } else {
+        // correct answer is 2
+        if (q3Value === 2) {
+          score++;
+        }
+      }
+
+      // UI updates
+      updateScore(score);
+
+      if (hasValidationError) {
+        showStatus("Fill in all questions correctly, then check again.", "error");
+      } else if (score === TOTAL_QUESTIONS) {
+        showStatus("Excellent! You’ve mastered the basics in this quiz. 🎉", "success");
+      } else {
+        showStatus(
+          `You scored ${score} out of ${TOTAL_QUESTIONS}. Check the errors and try again.`,
+          "error"
+        );
+      }
+
+      // Debug info in console for Lab 8
+      console.log("Current score:", score);
+      console.log("Q1 selected:", q1Selected ? q1Selected.value : null);
+      console.log("Q2 value:", q2Value);
+      console.log("Q3 value:", q3Value);
+    }
+
+    function resetQuiz() {
+      console.log("Resetting quiz…");
+
+      // Clear radio buttons
+      const radios = document.querySelectorAll('input[name="q1"]');
+      radios.forEach((radio) => {
+        radio.checked = false;
+      });
+
+      // Clear text inputs
+      q2Input.value = "";
+      q3Input.value = "";
+
+      clearErrors();
+      updateScore(0);
+      showStatus("Quiz reset. Try again when you’re ready.", null);
+    }
+
+    // ====== EVENT LISTENERS ======
+
+    // Button clicks
+    checkBtn.addEventListener("click", validateAndScore);
+    resetBtn.addEventListener("click", resetQuiz);
+
+    // Live feedback when typing – clears error messages
+    q2Input.addEventListener("input", () => {
+      q2Error.textContent = "";
+    });
+
+    q3Input.addEventListener("input", () => {
+      q3Error.textContent = "";
+    });
+
+    // Keyboard shortcuts: Enter = check, Escape = reset
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        validateAndScore();
+      } else if (event.key === "Escape") {
+        resetQuiz();
+      }
+    });
+
+    // Initial debug message
+    console.log(
+      "%cLab 8: Confidence Quiz ready. Try setting a breakpoint in validateAndScore().",
+      "color:#38bdf8"
+    );
+  </script>
+</body>
+</html>

@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Portfolio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #020617;
+      --card: #020617;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.28);
+      --accent-strong: rgba(56, 189, 248, 0.55);
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --text-soft: #6b7280;
+      --danger: #fb7185;
+      --radius: 1.1rem;
+      --shadow: 0 20px 45px rgba(15, 23, 42, 0.85);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top, #0f172a 0, #020617 50%);
+      color: var(--text-main);
+      padding: 1.5rem;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 640px;
+      background: radial-gradient(circle at 0 0, #020617, #020617);
+      border-radius: 1.6rem;
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      box-shadow: var(--shadow);
+      padding: 1.6rem 1.7rem 1.4rem;
+    }
+
+    .app-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1.4rem;
+    }
+
+    h1 {
+      margin: 0.4rem 0;
+      font-size: 1.6rem;
+    }
+
+    p {
+      margin: 0.25rem 0;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      background: rgba(15, 23, 42, 0.95);
+    }
+
+    .counter {
+      font-size: 0.82rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      text-align: right;
+    }
+
+    /* Input row */
+    .input-row {
+      display: flex;
+      gap: 0.6rem;
+      margin-bottom: 0.85rem;
+      flex-wrap: wrap;
+    }
+
+    .input-row input[type="text"] {
+      flex: 1 1 auto;
+      min-width: 0;
+      padding: 0.5rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.65);
+      background: #020617;
+      color: var(--text-main);
+      font-size: 0.9rem;
+    }
+
+    .input-row input[type="text"]:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent-soft);
+    }
+
+    .filter-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.9rem;
+      flex-wrap: wrap;
+      font-size: 0.8rem;
+      color: var(--text-soft);
+    }
+
+    .filter-buttons {
+      display: inline-flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border-radius: 999px;
+      border: 1px solid transparent;
+      padding: 0.45rem 0.85rem;
+      font-size: 0.84rem;
+      cursor: pointer;
+      background: var(--accent);
+      color: #020617;
+      font-weight: 500;
+      transition: transform 0.08s ease-out, box-shadow 0.1s ease-out,
+        background 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      white-space: nowrap;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 26px rgba(15, 23, 42, 0.85);
+    }
+
+    button.secondary {
+      background: transparent;
+      color: var(--text-soft);
+      border-color: rgba(148, 163, 184, 0.75);
+    }
+
+    button.secondary.active {
+      background: rgba(15, 23, 42, 0.9);
+      border-color: var(--accent-strong);
+      color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent-soft);
+    }
+
+    button.danger {
+      background: transparent;
+      color: var(--danger);
+      border-color: rgba(248, 113, 113, 0.7);
+    }
+
+    button.danger:hover {
+      background: rgba(127, 29, 29, 0.55);
+      color: #fee2e2;
+    }
+
+    /* List (timeline style) */
+    .list-wrapper {
+      max-height: 320px;
+      overflow-y: auto;
+      padding-right: 0.2rem;
+    }
+
+    ul.todo-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      border-left: 1px solid rgba(148, 163, 184, 0.45);
+    }
+
+    .todo-item {
+      position: relative;
+      padding: 0.7rem 0.6rem 0.7rem 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .todo-item::before {
+      content: "";
+      position: absolute;
+      left: -4px;
+      top: 1.1rem;
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 5px var(--accent-soft);
+    }
+
+    .todo-main {
+      flex: 1 1 auto;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .todo-checkbox {
+      accent-color: var(--accent);
+      transform: translateY(1px);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .todo-text {
+      font-size: 0.9rem;
+      color: var(--text-main);
+      word-break: break-word;
+    }
+
+    .todo-text.completed {
+      color: var(--text-soft);
+      text-decoration: line-through;
+      text-decoration-thickness: 1.5px;
+      text-decoration-color: rgba(148, 163, 184, 0.75);
+    }
+
+    .todo-meta {
+      font-size: 0.75rem;
+      color: var(--text-soft);
+      margin-top: 0.1rem;
+    }
+
+    .todo-actions {
+      display: flex;
+      gap: 0.3rem;
+      flex-shrink: 0;
+    }
+
+    .todo-actions button {
+      padding: 0.35rem 0.55rem;
+      font-size: 0.78rem;
+      box-shadow: none;
+    }
+
+    .todo-actions button:hover {
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.85);
+    }
+
+    .todo-edit-input {
+      width: 100%;
+      padding: 0.35rem 0.5rem;
+      border-radius: 0.6rem;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: #020617;
+      color: var(--text-main);
+      font-size: 0.86rem;
+    }
+
+    .todo-edit-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent-soft);
+    }
+
+    .empty-state {
+      font-size: 0.85rem;
+      color: var(--text-soft);
+      padding: 0.4rem 0.2rem 0.2rem;
+    }
+
+    .status {
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      min-height: 1.3em;
+      color: var(--text-soft);
+    }
+
+    .status strong {
+      color: var(--accent);
+    }
+
+    @media (max-width: 480px) {
+      .app {
+        padding: 1.3rem 1.1rem 1.2rem;
+      }
+      .app-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .input-row {
+        flex-direction: column;
+      }
+      .filter-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .list-wrapper {
+        max-height: 260px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" aria-labelledby="app-title">
+    <header class="app-header">
+      <div>
+        <div class="pill">
+          <span>Lab 9</span> • <span>DOM &amp; localStorage</span>
+        </div>
+        <h1 id="app-title">Timeline To-Do</h1>
+        <p>
+          Add tasks, mark them complete, edit, delete, and have everything persist
+          in <code>localStorage</code>. Press <strong>Enter</strong> to add quickly.
+        </p>
+      </div>
+      <div class="counter" id="counter">0 tasks</div>
+    </header>
+
+    <!-- Add task row -->
+    <div class="input-row">
+      <input
+        id="new-task-input"
+        type="text"
+        placeholder="What do you need to do?"
+        aria-label="New task description"
+      />
+      <button id="add-task-btn" type="button">
+        ➕ Add task
+      </button>
+    </div>
+
+    <!-- Filter & bulk actions -->
+    <div class="filter-row">
+      <div class="filter-buttons" aria-label="Filter tasks">
+        <button class="secondary active" data-filter="all" type="button">
+          All
+        </button>
+        <button class="secondary" data-filter="active" type="button">
+          Active
+        </button>
+        <button class="secondary" data-filter="completed" type="button">
+          Completed
+        </button>
+      </div>
+      <button id="clear-completed-btn" class="danger" type="button">
+        🧹 Clear completed
+      </button>
+    </div>
+
+    <!-- List -->
+    <div class="list-wrapper" aria-live="polite">
+      <ul id="todo-list" class="todo-list"></ul>
+      <div id="empty-state" class="empty-state">
+        Your list is empty. Add your first task above ✨
+      </div>
+    </div>
+
+    <div id="status" class="status"></div>
+  </div>
+
+  <script>
+    // ====== CONSTANTS & STATE ======
+    const STORAGE_KEY = "lab9-timeline-todos";
+
+    /** @type {Array<{id:string,text:string,completed:boolean,created:number}>} */
+    let tasks = [];
+
+    let currentFilter = "all"; // "all" | "active" | "completed"
+
+    // ====== ELEMENT REFERENCES ======
+    const newTaskInput = document.getElementById("new-task-input");
+    const addTaskBtn = document.getElementById("add-task-btn");
+    const clearCompletedBtn = document.getElementById("clear-completed-btn");
+    const listElement = document.getElementById("todo-list");
+    const emptyStateElement = document.getElementById("empty-state");
+    const statusElement = document.getElementById("status");
+    const counterElement = document.getElementById("counter");
+    const filterButtons = document.querySelectorAll('[data-filter]');
+
+    // ====== LOCAL STORAGE HELPERS ======
+    function loadFromStorage() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) {
+          console.log("No saved tasks in localStorage yet.");
+          tasks = [];
+          return;
+        }
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          tasks = parsed;
+        } else {
+          console.warn("Storage data is not an array. Resetting.");
+          tasks = [];
+        }
+      } catch (error) {
+        console.error("Error reading from localStorage:", error);
+        tasks = [];
+      }
+    }
+
+    function saveToStorage() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+      } catch (error) {
+        console.error("Error writing to localStorage:", error);
+      }
+    }
+
+    // ====== DOM HELPERS ======
+
+    function updateCounter() {
+      const total = tasks.length;
+      const remaining = tasks.filter(t => !t.completed).length;
+      const label = total === 1 ? "task" : "tasks";
+      counterElement.textContent = `${total} ${label} • ${remaining} left`;
+    }
+
+    function showStatus(message) {
+      statusElement.innerHTML = message || "";
+    }
+
+    function setFilter(filter) {
+      currentFilter = filter;
+      filterButtons.forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.filter === filter);
+      });
+      renderList();
+    }
+
+    function getFilteredTasks() {
+      if (currentFilter === "active") {
+        return tasks.filter(t => !t.completed);
+      }
+      if (currentFilter === "completed") {
+        return tasks.filter(t => t.completed);
+      }
+      return tasks;
+    }
+
+    function renderList() {
+      listElement.innerHTML = "";
+      const filtered = getFilteredTasks();
+
+      if (tasks.length === 0) {
+        emptyStateElement.style.display = "block";
+      } else {
+        emptyStateElement.style.display = filtered.length === 0 ? "block" : "none";
+        if (filtered.length === 0 && tasks.length > 0) {
+          emptyStateElement.textContent =
+            currentFilter === "completed"
+              ? "No completed tasks yet. Finish something and come back ✅"
+              : "Everything in this view is done. Nice!";
+        } else {
+          emptyStateElement.textContent = "Your list is empty. Add your first task above ✨";
+        }
+      }
+
+      filtered.forEach(task => {
+        const li = document.createElement("li");
+        li.className = "todo-item";
+        li.dataset.id = task.id;
+
+        const main = document.createElement("div");
+        main.className = "todo-main";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.className = "todo-checkbox";
+        checkbox.checked = task.completed;
+        checkbox.setAttribute("aria-label", "Toggle task complete");
+
+        const textContainer = document.createElement("div");
+
+        const textSpan = document.createElement("div");
+        textSpan.className = "todo-text";
+        if (task.completed) {
+          textSpan.classList.add("completed");
+        }
+        textSpan.textContent = task.text;
+
+        const meta = document.createElement("div");
+        meta.className = "todo-meta";
+        const date = new Date(task.created);
+        const smallTime = date.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"});
+        meta.textContent = `${task.completed ? "Done" : "Added"} at ${smallTime}`;
+
+        textContainer.appendChild(textSpan);
+        textContainer.appendChild(meta);
+
+        main.appendChild(checkbox);
+        main.appendChild(textContainer);
+
+        const actions = document.createElement("div");
+        actions.className = "todo-actions";
+
+        const editBtn = document.createElement("button");
+        editBtn.type = "button";
+        editBtn.className = "secondary";
+        editBtn.textContent = "✏️ Edit";
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.type = "button";
+        deleteBtn.className = "danger";
+        deleteBtn.textContent = "🗑 Delete";
+
+        actions.appendChild(editBtn);
+        actions.appendChild(deleteBtn);
+
+        li.appendChild(main);
+        li.appendChild(actions);
+        listElement.appendChild(li);
+      });
+
+      updateCounter();
+    }
+
+    // ====== CRUD OPERATIONS ======
+
+    function addTask(text) {
+      const trimmed = text.trim();
+      if (!trimmed) {
+        showStatus("Please type something before adding a task.");
+        newTaskInput.focus();
+        return;
+      }
+      const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+
+      const newTask = {
+        id,
+        text: trimmed,
+        completed: false,
+        created: Date.now(),
+      };
+
+      tasks.unshift(newTask); // newest first
+      saveToStorage();
+      renderList();
+      showStatus(`<strong>“${trimmed}”</strong> added to your list.`);
+      newTaskInput.value = "";
+      newTaskInput.focus();
+    }
+
+    function toggleTaskComplete(id) {
+      const task = tasks.find(t => t.id === id);
+      if (!task) return;
+      task.completed = !task.completed;
+      saveToStorage();
+      renderList();
+      showStatus(
+        task.completed
+          ? `<strong>Nice!</strong> Marked “${task.text}” as complete.`
+          : `“${task.text}” is active again.`
+      );
+    }
+
+    function deleteTask(id) {
+      const task = tasks.find(t => t.id === id);
+      tasks = tasks.filter(t => t.id !== id);
+      saveToStorage();
+      renderList();
+      if (task) {
+        showStatus(`Deleted “${task.text}” from your list.`);
+      }
+    }
+
+    function startEditingTask(id, listItem) {
+      const task = tasks.find(t => t.id === id);
+      if (!task) return;
+
+      const textDiv = listItem.querySelector(".todo-text");
+      const meta = listItem.querySelector(".todo-meta");
+      const actions = listItem.querySelector(".todo-actions");
+
+      // Replace text with input
+      const input = document.createElement("input");
+      input.type = "text";
+      input.value = task.text;
+      input.className = "todo-edit-input";
+      input.setAttribute("aria-label", "Edit task text");
+
+      textDiv.replaceWith(input);
+      meta.textContent = "Editing… Press Enter to save or Esc to cancel.";
+
+      const [editBtn, deleteBtn] = actions.querySelectorAll("button");
+      editBtn.textContent = "💾 Save";
+      editBtn.dataset.mode = "save";
+      deleteBtn.textContent = "✖ Cancel";
+      deleteBtn.dataset.mode = "cancel";
+
+      input.focus();
+      input.setSelectionRange(input.value.length, input.value.length);
+    }
+
+    function saveEditedTask(id, listItem) {
+      const task = tasks.find(t => t.id === id);
+      if (!task) return;
+
+      const input = listItem.querySelector(".todo-edit-input");
+      const actions = listItem.querySelector(".todo-actions");
+      const newText = input.value.trim();
+
+      if (!newText) {
+        showStatus("Task text can’t be empty.");
+        input.focus();
+        return;
+      }
+
+      task.text = newText;
+      saveToStorage();
+      showStatus(`Updated task to “${newText}”.`);
+      renderList();
+    }
+
+    function cancelEditing(listItem) {
+      renderList(); // easiest way to restore everything
+      showStatus("Edit canceled.");
+    }
+
+    function clearCompleted() {
+      const hasCompleted = tasks.some(t => t.completed);
+      if (!hasCompleted) {
+        showStatus("There are no completed tasks to clear.");
+        return;
+      }
+      tasks = tasks.filter(t => !t.completed);
+      saveToStorage();
+      renderList();
+      showStatus("Cleared all completed tasks.");
+    }
+
+    // ====== EVENT LISTENERS ======
+
+    // Add task button
+    addTaskBtn.addEventListener("click", () => {
+      addTask(newTaskInput.value);
+    });
+
+    // Enter to add from input (keyboard accessibility)
+    newTaskInput.addEventListener("keydown", event => {
+      if (event.key === "Enter") {
+        addTask(newTaskInput.value);
+      }
+    });
+
+    // Filter buttons
+    filterButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        setFilter(btn.dataset.filter);
+      });
+    });
+
+    // Clear completed
+    clearCompletedBtn.addEventListener("click", clearCompleted);
+
+    // Delegated events on list (toggle, edit, delete)
+    listElement.addEventListener("click", event => {
+      const listItem = event.target.closest(".todo-item");
+      if (!listItem) return;
+      const id = listItem.dataset.id;
+
+      if (event.target.matches(".todo-checkbox")) {
+        toggleTaskComplete(id);
+        return;
+      }
+
+      if (event.target.tagName === "BUTTON") {
+        const btn = event.target;
+        const mode = btn.dataset.mode;
+
+        if (!mode && btn.textContent.includes("Edit")) {
+          startEditingTask(id, listItem);
+        } else if (mode === "save") {
+          saveEditedTask(id, listItem);
+        } else if (mode === "cancel") {
+          cancelEditing(listItem);
+        } else if (!mode && btn.textContent.includes("Delete")) {
+          deleteTask(id);
+        }
+      }
+    });
+
+    // Editing with keyboard (Enter to save, Esc to cancel)
+    listElement.addEventListener("keydown", event => {
+      const input = event.target;
+      if (!input.classList.contains("todo-edit-input")) return;
+
+      const listItem = input.closest(".todo-item");
+      const id = listItem.dataset.id;
+
+      if (event.key === "Enter") {
+        saveEditedTask(id, listItem);
+      }
+      if (event.key === "Escape") {
+        cancelEditing(listItem);
+      }
+    });
+
+    // ====== INIT ======
+    function init() {
+      loadFromStorage();
+      renderList();
+      showStatus("Loaded to-do list from localStorage.");
+      newTaskInput.focus();
+      console.log(
+        "%cLab 9: To-Do app ready. Set a breakpoint in addTask() or toggleTaskComplete().",
+        "color:#38bdf8"
+      );
+    }
+
+    document.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+</html>
