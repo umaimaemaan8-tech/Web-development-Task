@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlashShop Pro Ultra</title>
+<style>
+  /* ===== Global Styles ===== */
+  body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #c08ba0; }
+  h1 { text-align: center; margin-top: 20px; color: #2c3e50; }
+  .controls { display: flex; justify-content: center; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
+  input, select { padding: 10px 15px; border-radius: 6px; border: 1px solid #ccc; font-size: 16px; }
+  .product-count { text-align: center; margin-bottom: 15px; color: #555; font-weight: bold; }
+
+  /* ===== Product Grid ===== */
+  .products { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; padding-bottom: 50px; }
+  .product {
+    border-radius: 12px; padding: 15px; width: 220px; background: #d8b2c4;
+    text-align: center; position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .product:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+  }
+  img { max-width: 100%; border-radius: 12px; transition: transform 0.3s; }
+  .product:hover img { transform: scale(1.05); }
+
+  /* ===== Product Info ===== */
+  h3 { font-size: 18px; color: #34495e; margin: 10px 0 5px; }
+  p { margin: 5px 0; color: #666; font-size: 14px; }
+  .rating { color: #f1c40f; font-weight: bold; margin: 5px 0; }
+  .price { font-size: 16px; font-weight: bold; color: #e74c3c; margin: 5px 0; }
+
+  /* ===== Buttons & Badges ===== */
+  button {
+    background: #3498db; color: #fff; border: none; padding: 8px 12px; border-radius: 6px;
+    cursor: pointer; transition: background 0.3s, transform 0.2s;
+  }
+  button:hover { background: #2980b9; transform: scale(1.05); }
+  .badge {
+    position: absolute; top: 10px; left: 10px; background: #e74c3c; color: #fff;
+    padding: 5px 8px; border-radius: 5px; font-size: 12px; font-weight: bold;
+  }
+  .badge.sale { background: #27ae60; }
+
+</style>
+</head>
+<body>
+
+<h1>FlashShop Pro Ultra</h1>
+
+<div class="controls">
+  <input type="text" id="searchInput" placeholder="Search products...">
+  <select id="categoryFilter"><option value="all">All Categories</option></select>
+  <select id="sortBy">
+    <option value="price-asc">Price: Low → High</option>
+    <option value="price-desc">Price: High → Low</option>
+    <option value="rating-desc">Rating: High → Low</option>
+  </select>
+</div>
+
+<div class="product-count" id="productCount"></div>
+<div class="products" id="productContainer"></div>
+
+<script>
+const productContainer = document.getElementById('productContainer');
+const categoryFilter = document.getElementById('categoryFilter');
+const sortBy = document.getElementById('sortBy');
+const searchInput = document.getElementById('searchInput');
+const productCount = document.getElementById('productCount');
+
+// Sample JSON Data (You can fetch from API instead)
+const productsData = [
+  {id:1, title:"Wireless Headphones", category:"Electronics", price:49.99, rating:4.5, image:"https://via.placeholder.com/200", hot:true},
+  {id:2, title:"Running Shoes", category:"Footwear", price:79.99, rating:4.7, image:"https://via.placeholder.com/200", sale:true},
+  {id:3, title:"Smart Watch", category:"Electronics", price:199.99, rating:4.2, image:"https://via.placeholder.com/200"},
+  {id:4, title:"Leather Wallet", category:"Accessories", price:29.99, rating:4.0, image:"https://via.placeholder.com/200", hot:true},
+  {id:5, title:"Sunglasses", category:"Accessories", price:59.99, rating:4.6, image:"https://via.placeholder.com/200", sale:true}
+];
+
+// Render Products
+const renderProducts = (products) => {
+  productContainer.innerHTML = products.map(({title, price, rating, image, category, hot, sale}) => `
+    <div class="product">
+      ${hot ? '<div class="badge">HOT</div>' : ''}
+      ${sale ? '<div class="badge sale">SALE</div>' : ''}
+      <img src="${image}" alt="${title}">
+      <h3>${title}</h3>
+      <p>Category: ${category}</p>
+      <p class="price">$${price.toFixed(2)}</p>
+      <p class="rating">${'★'.repeat(Math.floor(rating))}${'☆'.repeat(5 - Math.floor(rating))}</p>
+      <button>Add to Cart</button>
+    </div>
+  `).join('');
+  productCount.textContent = `${products.length} product(s) found`;
+};
+
+// Populate Categories
+const populateCategories = (products) => {
+  const categories = [...new Set(products.map(p => p.category))];
+  categories.forEach(cat => {
+    const option = document.createElement('option');
+    option.value = cat;
+    option.textContent = cat;
+    categoryFilter.appendChild(option);
+  });
+};
+
+// Filter, Sort, Search
+const filterSortSearch = (products) => {
+  const searchTerm = searchInput.value.toLowerCase();
+  const selectedCategory = categoryFilter.value;
+
+  let filtered = products.filter(p => p.title.toLowerCase().includes(searchTerm));
+  if (selectedCategory !== 'all') filtered = filtered.filter(p => p.category === selectedCategory);
+
+  switch(sortBy.value) {
+    case 'price-asc': filtered.sort((a,b)=>a.price-b.price); break;
+    case 'price-desc': filtered.sort((a,b)=>b.price-a.price); break;
+    case 'rating-desc': filtered.sort((a,b)=>b.rating-a.rating); break;
+  }
+
+  renderProducts(filtered);
+};
+
+// Init
+const init = () => {
+  renderProducts(productsData);
+  populateCategories(productsData);
+
+  searchInput.addEventListener('input', () => filterSortSearch(productsData));
+  categoryFilter.addEventListener('change', () => filterSortSearch(productsData));
+  sortBy.addEventListener('change', () => filterSortSearch(productsData));
+};
+
+init();
+</script>
+
+</body>
+</html>

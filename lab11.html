@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab 11: Canvas & SVG Ultra Pro</title>
+<style>
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    background: #1e1e2f;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  h1, h2 { text-align: center; margin: 20px 0; }
+  h1 { color: #00bfff; }
+  h2 { color: #f39c12; }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .controls label { display: flex; align-items: center; gap: 5px; font-size: 14px; }
+  input[type="color"], input[type="range"] {
+    cursor: pointer;
+    border-radius: 6px;
+    border: none;
+    height: 28px;
+  }
+  button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.3s, box-shadow 0.3s;
+  }
+  button:hover { transform: scale(1.05); box-shadow: 0 0 15px rgba(255,255,255,0.4); }
+  #clearBtn { background: #e74c3c; color: #fff; }
+  #saveBtn { background: #27ae60; color: #fff; }
+  #eraserBtn { background: #f1c40f; color: #000; }
+
+  canvas {
+    border: 2px solid #00bfff;
+    border-radius: 12px;
+    background: #2c2c3e;
+    margin-top: 20px;
+    cursor: crosshair;
+  }
+
+  svg {
+    margin-top: 40px;
+    border: 2px solid #00bfff;
+    border-radius: 12px;
+    background: #2c2c3e;
+  }
+</style>
+</head>
+<body>
+
+<h1>Ultimate Canvas Drawing App</h1>
+
+<div class="controls">
+  <label>Brush Color: <input type="color" id="colorPicker" value="#00bfff"></label>
+  <label>Brush Size: <input type="range" id="brushSize" min="1" max="30" value="5"></label>
+  <label>Opacity: <input type="range" id="opacity" min="0.1" max="1" step="0.1" value="1"></label>
+  <button id="eraserBtn">Eraser</button>
+  <button id="clearBtn">Clear Canvas</button>
+  <button id="saveBtn">Save as Image</button>
+</div>
+
+<canvas id="drawingCanvas" width="800" height="500"></canvas>
+
+<h2>SVG Gradient & Glow Animation</h2>
+<svg id="svgCanvas" width="800" height="200">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00bfff;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#1abc9c;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f39c12;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#e74c3c;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#9b59b6;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#8e44ad;stop-opacity:1"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <circle cx="50" cy="100" r="30" fill="url(#grad1)" filter="url(#glow)"/>
+  <rect x="700" y="70" width="50" height="50" fill="url(#grad2)" filter="url(#glow)"/>
+  <polygon points="400,40 430,110 370,110" fill="url(#grad3)" filter="url(#glow)"/>
+</svg>
+
+<script>
+  // ===== Canvas Drawing App =====
+  const canvas = document.getElementById('drawingCanvas');
+  const ctx = canvas.getContext('2d');
+  let isDrawing = false;
+  let brushColor = document.getElementById('colorPicker').value;
+  let brushSize = document.getElementById('brushSize').value;
+  let brushOpacity = document.getElementById('opacity').value;
+  let eraser = false;
+
+  canvas.addEventListener('mousedown', () => isDrawing = true);
+  canvas.addEventListener('mouseup', () => { isDrawing = false; ctx.beginPath(); });
+  canvas.addEventListener('mouseout', () => { isDrawing = false; ctx.beginPath(); });
+
+  canvas.addEventListener('mousemove', (e) => {
+    if(!isDrawing) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    ctx.lineWidth = brushSize;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = eraser ? '#2c2c3e' : brushColor;
+    ctx.globalAlpha = brushOpacity;
+
+    ctx.shadowBlur = 8;
+    ctx.shadowColor = brushColor;
+
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+  });
+
+  document.getElementById('colorPicker').addEventListener('input', (e) => { brushColor = e.target.value; eraser = false; });
+  document.getElementById('brushSize').addEventListener('input', (e) => brushSize = e.target.value);
+  document.getElementById('opacity').addEventListener('input', (e) => brushOpacity = e.target.value);
+  document.getElementById('eraserBtn').addEventListener('click', () => eraser = true);
+  document.getElementById('clearBtn').addEventListener('click', () => ctx.clearRect(0, 0, canvas.width, canvas.height));
+  document.getElementById('saveBtn').addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = 'Ultra_Pro_Drawing.png';
+    link.href = canvas.toDataURL();
+    link.click();
+  });
+
+  // ===== SVG Animation =====
+  const svg = document.getElementById('svgCanvas');
+  const circle = svg.querySelector('circle');
+  const rect = svg.querySelector('rect');
+  const polygon = svg.querySelector('polygon');
+
+  let circlePos = 50, circleDir = 1;
+  let rectPos = 700, rectDir = -1;
+  let polyPos = 0, polyDir = 1;
+
+  function animateSVG() {
+    // Circle horizontal movement
+    if(circlePos > 750 || circlePos < 50) circleDir *= -1;
+    circlePos += 3 * circleDir;
+    circle.setAttribute('cx', circlePos);
+
+    // Rectangle horizontal movement
+    if(rectPos > 750 || rectPos < 50) rectDir *= -1;
+    rectPos += 2 * rectDir;
+    rect.setAttribute('x', rectPos);
+
+    // Polygon back-and-forth movement
+    polyPos += 1.5 * polyDir;
+    if(polyPos > 50 || polyPos < -50) polyDir *= -1;
+    const points = `${400+polyPos},40 ${430+polyPos},110 ${370+polyPos},110`;
+    polygon.setAttribute('points', points);
+
+    requestAnimationFrame(animateSVG);
+  }
+  animateSVG();
+</script>
+
+</body>
+</html>
