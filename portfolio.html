@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Responsive Portfolio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Bootstrap 5 CDN -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+
+  <style>
+    :root {
+      --bg: #050816;
+      --bg-alt: #0b1020;
+      --card-bg: #111827;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.18);
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --radius-lg: 1.25rem;
+      --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.65);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      color: var(--text-main);
+      background: radial-gradient(circle at top, #0f172a 0, #020617 55%);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* ===== HEADER (Flexbox) ===== */
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.9rem 1.1rem;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #020617, #020617) padding-box,
+        conic-gradient(from 210deg, #22d3ee, #6366f1, #22c55e, #22d3ee)
+          border-box;
+      border: 1px solid transparent;
+      box-shadow: var(--shadow-soft);
+      position: sticky;
+      top: 0.75rem;
+      z-index: 10;
+      backdrop-filter: blur(16px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .brand-logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, #22d3ee, #0f172a);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: #e0f2fe;
+      box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.35);
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .brand-text span:first-child {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .brand-text span:last-child {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .primary-nav {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      font-size: 0.85rem;
+    }
+
+    .primary-nav a {
+      padding: 0.35rem 0.8rem;
+      border-radius: 999px;
+      color: var(--text-muted);
+      border: 1px solid transparent;
+      transition: all 0.18s ease-out;
+    }
+
+    .primary-nav a:hover,
+    .primary-nav a:focus-visible {
+      color: var(--text-main);
+      background: rgba(15, 23, 42, 0.9);
+      border-color: rgba(148, 163, 184, 0.55);
+    }
+
+    .primary-nav a.nav-cta {
+      color: #0f172a;
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.7);
+    }
+
+    /* ===== MAIN LAYOUT (Flexbox) ===== */
+    .layout {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: stretch;
+    }
+
+    .main-content,
+    .sidebar {
+      border-radius: var(--radius-lg);
+      background: radial-gradient(circle at 0 0, #0f172a 0, #020617 55%);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      box-shadow: var(--shadow-soft);
+      padding: 1.3rem 1.4rem;
+    }
+
+    .main-content {
+      flex: 2;
+    }
+
+    .sidebar {
+      flex: 1;
+      background: linear-gradient(
+          135deg,
+          rgba(56, 189, 248, 0.07),
+          transparent 50%
+        ),
+        radial-gradient(circle at 110% 0%, rgba(52, 211, 153, 0.08), #020617);
+    }
+
+    .pill-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.15rem 0.7rem 0.18rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      background: rgba(15, 23, 42, 0.8);
+    }
+
+    h1 {
+      margin: 0.6rem 0 0.2rem;
+      font-size: clamp(1.7rem, 4vw, 2.1rem);
+    }
+
+    h2 {
+      margin-top: 1.7rem;
+      margin-bottom: 0.4rem;
+      font-size: 1.1rem;
+    }
+
+    p {
+      margin: 0.3rem 0;
+      font-size: 0.93rem;
+      color: var(--text-muted);
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.6rem;
+    }
+
+    .tag {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.55);
+      color: var(--text-muted);
+    }
+
+    .timeline {
+      margin-top: 0.8rem;
+      padding-left: 0.3rem;
+      border-left: 1px solid rgba(148, 163, 184, 0.35);
+    }
+
+    .timeline-item {
+      padding-left: 0.9rem;
+      margin-bottom: 0.6rem;
+      position: relative;
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: -0.23rem;
+      top: 0.2rem;
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px var(--accent-soft);
+    }
+
+    .timeline-title {
+      font-size: 0.82rem;
+      font-weight: 500;
+    }
+
+    .timeline-meta {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+
+    /* Sidebar list */
+    .sidebar h2 {
+      margin-top: 0;
+    }
+
+    .sidebar-section {
+      margin-top: 0.6rem;
+    }
+
+    .sidebar-section-title {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      margin-bottom: 0.3rem;
+    }
+
+    .sidebar-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 0.85rem;
+    }
+
+    .sidebar-list li {
+      padding: 0.25rem 0;
+      display: flex;
+      justify-content: space-between;
+      gap: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .sidebar-pill {
+      font-size: 0.7rem;
+      padding: 0.08rem 0.45rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      white-space: nowrap;
+    }
+
+    /* ===== Bootstrap Projects Section (card grid) ===== */
+    .projects-section {
+      margin-top: 1.6rem;
+      padding: 1rem 0 0.3rem;
+      border-radius: var(--radius-lg);
+      background: radial-gradient(circle at 0 0, #020617, #020617);
+      border: 1px dashed rgba(148, 163, 184, 0.5);
+    }
+
+    .projects-section h2 {
+      margin-top: 0;
+      margin-bottom: 0.7rem;
+      padding-inline: 0.25rem;
+    }
+
+    .projects-section .card {
+      background-color: var(--card-bg);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      border-radius: 1rem;
+    }
+
+    .projects-section .card-title {
+      font-size: 0.98rem;
+    }
+
+    .projects-section .badge {
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.62rem;
+    }
+
+    /* ===== FOOTER ===== */
+    .site-footer {
+      text-align: center;
+      padding: 0.8rem 0.5rem 0.4rem;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* ===== MEDIA QUERIES ===== */
+
+    /* Mobile-first: stacked is default */
+
+    /* Tablet breakpoint */
+    @media (min-width: 768px) {
+      .layout {
+        flex-direction: row;
+      }
+      .main-content {
+        flex: 2;
+      }
+      .sidebar {
+        flex: 1;
+        position: sticky;
+        top: 5rem;
+        align-self: flex-start;
+      }
+    }
+
+    /* Desktop: add a bit more structure */
+    @media (min-width: 1024px) {
+      .page {
+        padding: 1.5rem 1.8rem 2rem;
+      }
+      .main-content,
+      .sidebar {
+        padding: 1.6rem 1.7rem;
+      }
+      .projects-section {
+        padding-inline: 0.6rem;
+      }
+    }
+
+    /* Extra small: compress header layout */
+    @media (max-width: 480px) {
+      .site-header {
+        border-radius: 1rem;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .primary-nav {
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <!-- HEADER (Flexbox) -->
+    <header class="site-header">
+      <div class="brand">
+        <div class="brand-logo">MP</div>
+        <div class="brand-text">
+          <span>My Portfolio</span>
+          <span>Media Queries &amp; Flexbox</span>
+        </div>
+      </div>
+      <nav class="primary-nav">
+        <a href="#about">About</a>
+        <a href="#timeline">Experience</a>
+        <a href="#projects">Projects</a>
+        <a href="#contact" class="nav-cta">Contact</a>
+      </nav>
+    </header>
+
+    <!-- MAIN FLEX LAYOUT -->
+    <div class="layout">
+      <!-- MAIN CONTENT -->
+      <main class="main-content">
+        <section id="about">
+          <span class="pill-label">
+            <span>Lab 7</span> • <span>Responsive Design</span>
+          </span>
+          <h1>Front-End Developer in Training</h1>
+          <p>
+            This portfolio layout is built mobile-first using Flexbox,
+            custom media queries, and a Bootstrap card grid. Resize your
+            browser to see the layout reflow across mobile, tablet, and
+            desktop breakpoints.
+          </p>
+
+          <div class="tag-row" aria-label="Tech stack">
+            <span class="tag">HTML5</span>
+            <span class="tag">CSS3</span>
+            <span class="tag">Flexbox</span>
+            <span class="tag">Media Queries</span>
+            <span class="tag">Bootstrap 5</span>
+          </div>
+        </section>
+
+        <section id="timeline">
+          <h2>Learning Timeline</h2>
+          <p>How I’m becoming comfortable with responsive design:</p>
+
+          <div class="timeline">
+            <article class="timeline-item">
+              <div class="timeline-title">Static HTML Layout</div>
+              <div class="timeline-meta">Week 1 — semantic structure</div>
+              <p>Plain layout using only block elements and no layout
+                system.</p>
+            </article>
+
+            <article class="timeline-item">
+              <div class="timeline-title">Flexbox for Page Regions</div>
+              <div class="timeline-meta">
+                Week 2 — header, content, sidebar, footer
+              </div>
+              <p>Re-implemented the page shell with Flexbox to create a
+                flexible two-column layout.</p>
+            </article>
+
+            <article class="timeline-item">
+              <div class="timeline-title">Media Queries</div>
+              <div class="timeline-meta">
+                Week 3 — mobile → tablet → desktop
+              </div>
+              <p>Introduced breakpoints so the layout adapts to different
+                screen widths.</p>
+            </article>
+
+            <article class="timeline-item">
+              <div class="timeline-title">Bootstrap Components</div>
+              <div class="timeline-meta">
+                Week 4 — cards &amp; grid system
+              </div>
+              <p>Used Bootstrap’s utility classes to quickly build a
+                responsive project gallery.</p>
+            </article>
+          </div>
+        </section>
+
+        <!-- BOOTSTRAP COMPONENT: RESPONSIVE CARD GRID -->
+        <section
+          id="projects"
+          class="projects-section container"
+          aria-label="Projects using Bootstrap card grid"
+        >
+          <h2>Featured Projects (Bootstrap)</h2>
+          <div class="row g-3 g-md-4">
+            <div class="col-12 col-md-6 col-lg-4">
+              <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                  <span class="badge rounded-pill bg-info-subtle text-info mb-2">
+                    HTML • CSS
+                  </span>
+                  <h3 class="card-title mb-1">Landing Page</h3>
+                  <p class="card-text mb-2">
+                    A simple marketing page focused on clean typography and
+                    responsive sections.
+                  </p>
+                  <p class="card-text">
+                    <small class="text-secondary">Role: layout &amp;
+                      accessibility</small>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4">
+              <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                  <span class="badge rounded-pill bg-primary-subtle text-primary mb-2">
+                    Flexbox
+                  </span>
+                  <h3 class="card-title mb-1">Dashboard Shell</h3>
+                  <p class="card-text mb-2">
+                    A multi-column Flexbox layout with a collapsible sidebar
+                    that adapts on small screens.
+                  </p>
+                  <p class="card-text">
+                    <small class="text-secondary">Role: page
+                      architecture</small>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4">
+              <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                  <span class="badge rounded-pill bg-success-subtle text-success mb-2">
+                    Bootstrap 5
+                  </span>
+                  <h3 class="card-title mb-1">Component Library</h3>
+                  <p class="card-text mb-2">
+                    Experimented with Bootstrap buttons, cards, and navbars to
+                    build reusable UI patterns.
+                  </p>
+                  <p class="card-text">
+                    <small class="text-secondary">Role: design systems
+                      practice</small>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="contact" style="margin-top: 1.8rem">
+          <h2>Let’s Collaborate</h2>
+          <p>
+            Want to pair-program, review code, or discuss CSS layout tricks?
+            Reach out and let’s build something responsive together.
+          </p>
+        </section>
+      </main>
+
+      <!-- SIDEBAR (Flexbox item) -->
+      <aside class="sidebar" aria-label="Sidebar">
+        <h2>Lab 7: Checklist</h2>
+        <p>
+          A quick summary of the objectives and what this page implements.
+        </p>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Objectives</div>
+          <ul class="sidebar-list">
+            <li>
+              <span>Flexbox layout</span>
+              <span class="sidebar-pill">Done</span>
+            </li>
+            <li>
+              <span>Media queries</span>
+              <span class="sidebar-pill">Done</span>
+            </li>
+            <li>
+              <span>Bootstrap component</span>
+              <span class="sidebar-pill">Done</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Breakpoints</div>
+          <ul class="sidebar-list">
+            <li>
+              <span>Mobile</span>
+              <span class="sidebar-pill">&lt; 768px</span>
+            </li>
+            <li>
+              <span>Tablet</span>
+              <span class="sidebar-pill">≥ 768px</span>
+            </li>
+            <li>
+              <span>Desktop</span>
+              <span class="sidebar-pill">≥ 1024px</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Tools</div>
+          <ul class="sidebar-list">
+            <li>
+              <span>VS Code</span>
+              <span class="sidebar-pill">Editor</span>
+            </li>
+            <li>
+              <span>Live Server</span>
+              <span class="sidebar-pill">Preview</span>
+            </li>
+            <li>
+              <span>Bootstrap CDN</span>
+              <span class="sidebar-pill">UI</span>
+            </li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+      Built for Lab 7 — Responsive Design (Flexbox + Media Queries + Bootstrap)
+    </footer>
+  </div>
+
+  <!-- Bootstrap JS (optional, here for completeness if you add JS components) -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+  ></script>
+</body>
+</html>
