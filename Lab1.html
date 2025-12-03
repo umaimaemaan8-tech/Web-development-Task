@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 1</title>
+    <style>
+        .container{
+
+       display:flex;
+       flex-direction: column;
+        border : 2px solid rgb(144, 144, 248);
+        margin:50px auto;
+        background-color: rgb(237, 237, 240);
+        width:500px;
+        height: 500px;
+        text-align: center;
+       padding:auto;
+       border-radius:5px;
+       align-items:center;
+       justify-content: center;
+        
+
+        }
+        .button{
+            background-color: rgb(237, 237, 240);
+            width:200px;
+            border-radius: 5px;
+            padding:5px;
+    }
+        .button:hover{
+            background-color: grey;
+        }
+
+
+
+    </style>
+</head>
+<body>
+     <div class="container">
+    <h1>Login</h1>
+   
+    <form>
+        <label for ="Name">Name:</label><br>
+        <input type="text"id="text"placeholder="Enter your Name">
+       <br>
+       <br>
+       
+        <label for ="password">Password:</label><br>
+        <input type="text"id="password"placeholder="Enter your Password">
+<br>
+<br>
+        <!-- <input type="Submit"value="Login"> -->
+         <button class="button">Submit</button>
+
+    </form>
+    </div>
+    
+</body>
+</html>
